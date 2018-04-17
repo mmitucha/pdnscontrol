@@ -242,8 +242,11 @@ angular.module('ControlApp.controllers.zone').controller('ZoneDetailCtrl',
         return;
       }
       // success. update local data from server
-      $scope.master.rrsets = zoneSort(response.rrsets);
-      $scope.zone = Restangular.copy($scope.master);
+      Restangular.one('servers', $scope.server._id).one('zones', $scope.zone.id).get().then(function(bcde) {
+          $scope.master.rrsets = zoneSort(bcde.rrsets);
+          $scope.zone = Restangular.copy($scope.master);
+
+      });
       // send auto ptr changes to server
       doAutoPtr(changes);
     }, function(errorResponse) {
@@ -418,7 +421,9 @@ angular.module('ControlApp.controllers.zone').controller('ZoneDetailCtrl',
     return true;
   };
 
-  $scope.commentsSupported = ($scope.zone.comments !== undefined);
+  // $scope.commentsSupported = ($scope.zone.comments !== undefined);
+  // Ugly hack
+  $scope.commentsSupported = true;
 }]);
 
 angular.module('ControlApp.controllers.zone').controller('ZoneCommentCtrl',
